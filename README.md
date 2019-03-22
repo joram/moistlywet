@@ -9,4 +9,4 @@ Documentation and configuration for a plant moisture control module and API.
      - *Auth stuff:*
      - API: using custom API keys per module
      - Web: google-oauth
-- Client: react (hand bombing rest API usage?)
+- Client: react/S3 (hand bombing rest API usage?)
