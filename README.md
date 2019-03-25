@@ -1,6 +1,9 @@
 # moistlywet
 Documentation and configuration for a plant moisture control module and API.
 
+## Running 
+`npm start`
+
 ## Initial infrastructure thoughts
 
 ### API/Web-UI Stack
