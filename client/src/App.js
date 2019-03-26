@@ -1,50 +1,127 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import LandingPage from "./landingPage.js";
+import PlantsListPage from "./plantsListPage";
+import PlantDetailsPage from "./plantDetailsPage";
+import {choose} from "./utils"
 
-let tagline_options = [
-  "sew moist seeds",
-  "for sustained propagation",
-  "blue ribbon results",
-  "succulence for your succulents",
-  "promotes vigorous growth",
-  "photo _sin_ thesis",
-  "grow moister",
-  "don't let your moistness surprise you",
-  "keep your pot as wet as you please",
-  "a moist pot is a happy pot",
-  "don't just be dirty. be dirty AND moist",
-  "stay on top of your moistness",
-  "put your moisture in the cloud",
-  "we want to get you wet... _down there_",
-  "for a happy, healthy bush",
+let plant_image_urls = [
+  "https://cdn.bmstores.co.uk/images/hpcProductImage/imgFull/297350-Leafy-Plant-Pot.jpg",
+  "https://target.scene7.com/is/image/Target/GUEST_fc982b27-ef4f-48a3-bf11-a69d32cc91cc?wid=488&hei=488&fmt=pjpeg",
+  "https://images-na.ssl-images-amazon.com/images/I/41NbuQ-wKPL._SX425_.jpg",
+  "https://cdn.shopclues.com/images1/thumbnails/92328/320/320/140786749-92328394-1539116494.jpg",
 ];
 
-let background_image_options = [
-  "https://s3-us-west-1.amazonaws.com/moistlywet-assets/backgrounds/IMG_20190322_134100.jpg",
-  "https://s3-us-west-1.amazonaws.com/moistlywet-assets/backgrounds/IMG_20190322_134103.jpg",
-  "https://s3-us-west-1.amazonaws.com/moistlywet-assets/backgrounds/IMG_20190322_134105.jpg",
-  "https://s3-us-west-1.amazonaws.com/moistlywet-assets/backgrounds/IMG_20190322_134254.jpg",
-  "https://s3-us-west-1.amazonaws.com/moistlywet-assets/backgrounds/IMG_20190322_134255.jpg",
-  "https://s3-us-west-1.amazonaws.com/moistlywet-assets/backgrounds/IMG_20190322_134300.jpg",
-];
+let test_plants = [
+  {
+    name: "Plant #1",
+    minMoisture: 10.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 1,
+  },
+  {
+    name: "Plant #2",
+    minMoisture: 10.0,
+    maxMoisture: 500.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 2,
+  },
+  {
+    name: "Bob the Plant",
+    minMoisture: 1.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 3,
+  },
+  {
+    name: "Planticus",
+    minMoisture: 1.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 4,
+  },
+  {
+    name: "Planticlese",
+    minMoisture: 1.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 5,
+  },
+  {
+    name: "Plant number one",
+    minMoisture: 10.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 6,
+  },
+  {
+    name: "Plant #2/58",
+    minMoisture: 10.0,
+    maxMoisture: 500.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 7,
+  },
+  {
+    name: "Bob the Plant the II",
+    minMoisture: 1.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 8,
+  },
+  {
+    name: "Planticus the 2nd",
+    minMoisture: 1.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 9,
+  },
+  {
+    name: "Planticlese the second",
+    minMoisture: 1.0,
+    maxMoisture: 50.0,
+    imageUrl: choose(plant_image_urls),
+    pubId: 10,
+  },
 
-function choose(choices) {
-  var index = Math.floor(Math.random() * choices.length);
-  return choices[index];
-}
+];
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: null,
+      plantPubId: null,
+    };
+  }
+
+  loginSuccess(response){
+    let state = this.state;
+    state.user = response.profileObj;
+    this.setState(state);
+  }
+
+  loginFailure(response){
+    console.log("login failure");
+    console.log(response);
+  }
+
+  plantSelected(data){
+    let state = this.state;
+    state.plantPubId = data.pubId;
+    this.setState(state);
+  }
+
   render() {
-    return (
-      <div className="App" style={{backgroundSize: "cover", backgroundImage:`url("${choose(background_image_options)}")`}}>
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Moistly Wet</h2>
-          <div>{choose(tagline_options)}</div>
-        </header>
-      </div>
-    );
+    if(this.state.user === null){
+      return <LandingPage loginSuccess={this.loginSuccess.bind(this)} loginFailure={this.loginFailure.bind(this)} />
+    }
+    if(this.state.plantPubId){
+      return <PlantDetailsPage name="Bob" imageUrl="https://cdn.shopclues.com/images1/thumbnails/92328/320/320/140786749-92328394-1539116494.jpg" />
+    }
+
+    return <PlantsListPage plants={test_plants} plantSelected={this.plantSelected.bind(this)}/>
   }
 }
 
