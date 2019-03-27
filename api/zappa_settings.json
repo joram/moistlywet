@@ -1,0 +1,12 @@
+{
+  "production": {
+    "app_function": "api.app",
+    "aws_region": "us-west-1",
+    "profile_name": "default",
+    "project_name": "api",
+    "runtime": "python3.6",
+    "s3_bucket": "moistlywet-server",
+    "certificate_arn": "arn:aws:acm:us-east-1:431568096872:certificate/a1d8530b-65a0-4831-b78b-b6f684335d06",
+    "domain": "api.moistlywet.com"
+  }
+}

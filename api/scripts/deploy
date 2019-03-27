@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+zappa update production
