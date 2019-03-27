@@ -4,6 +4,7 @@ import LandingPage from "./landingPage.js";
 import PlantsListPage from "./plantsListPage";
 import PlantDetailsPage from "./plantDetailsPage";
 import {choose} from "./utils"
+import {auth} from "./api"
 
 let plant_image_urls = [
   "https://cdn.bmstores.co.uk/images/hpcProductImage/imgFull/297350-Leafy-Plant-Pot.jpg",
@@ -98,8 +99,12 @@ class App extends Component {
 
   loginSuccess(response){
     let state = this.state;
-    state.user = response.profileObj;
-    this.setState(state);
+    auth(response).then(resp => {
+      if(resp){
+        state.user = response.profileObj;
+        this.setState(state);
+      }
+    });
   }
 
   loginFailure(response){
