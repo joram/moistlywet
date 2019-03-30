@@ -26,16 +26,19 @@ class PlantItem extends Component {
 class PlantsListPage extends Component {
 
   render() {
-
+    if(this.props.plants === undefined){
+      return null
+    }
     let plants = [];
     this.props.plants.forEach(plant =>{
+      console.log(plant )
       plants.push(<PlantItem
         name={plant.name}
-        minMoisture={plant.minMoisture}
-        maxMoisture={plant.maxMoisture}
-        imageUrl={plant.imageUrl}
-        pubId={plant.pubId}
-        key={plant.pubId}
+        minMoisture={plant.min_moisture}
+        maxMoisture={plant.max_moisture}
+        imageUrl={plant.image_url}
+        pubId={plant.pub_id}
+        key={plant.pub_id}
         onClick={this.props.plantSelected}
       />)
     });

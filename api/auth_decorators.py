@@ -3,18 +3,22 @@ from flask import jsonify, request
 from models import UserModel, AuthTokenModel
 
 
-def _has_valid_token():
+def _get_token():
     token_string = request.headers.get("MOISTLY-WET-TOKEN")
     if token_string is None:
-        return False
-    token = AuthTokenModel.get(token_string)
-    return True
+        return None
+    try:
+        return AuthTokenModel.get(token_string)
+    except AuthTokenModel.DoesNotExist:
+        return None
 
 
 def requires_valid_token(func):
     def wrapper():
-        if _has_valid_token():
-            return func()
+        token = _get_token()
+        if token is not None:
+            request.token = token
+            return func(token)
         return jsonify({"error": "invalid token"})
     return wrapper
 

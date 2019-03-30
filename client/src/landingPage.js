@@ -44,6 +44,10 @@ class LandingPage extends Component {
           buttonText="Login"
           onSuccess={this.props.loginSuccess}
           onFailure={this.props.loginFailure}
+          responseType={"token"}
+          offline={true}
+          isSignedIn={true}
+          // autoLoad={true}
         />
       </header>
     </div>;

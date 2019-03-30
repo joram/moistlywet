@@ -8,3 +8,6 @@ https://docs.micropython.org/en/latest/esp8266/tutorial/intro.html
 - erase the firmware: `esptool.py --port /dev/ttyUSB0 erase_flash`
 - flash the firmware: `esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 esp8266-20170108-v1.8.7.bin`
 - connect to a python shell: `picocom /dev/ttyUSB0 -b115200`
+
+## bootup
+https://docs.micropython.org/en/latest/esp8266/tutorial/filesystem.html#start-up-scripts
