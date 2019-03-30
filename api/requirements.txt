@@ -3,3 +3,4 @@ flask
 flask_cors
 zappa
 requests
+pynamodb==3.3.3
