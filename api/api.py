@@ -1,7 +1,8 @@
+import random
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from auth_decorators import requires_valid_token, requires_valid_api_key
-from models import UserModel, AuthTokenModel, PlantModel
+from models import UserModel, AuthTokenModel, PlantModel, APIKeyModel
 
 app = Flask(__name__)
 CORS(app)
@@ -72,33 +73,44 @@ def auth():
 @app.route('/api/v1/plants', methods=["GET"])
 @requires_valid_token
 def plants(token):
-    # import random
-    # plant_image_urls = [
-    #     "https://cdn.bmstores.co.uk/images/hpcProductImage/imgFull/297350-Leafy-Plant-Pot.jpg",
-    #     "https://target.scene7.com/is/image/Target/GUEST_fc982b27-ef4f-48a3-bf11-a69d32cc91cc?wid=488&hei=488&fmt=pjpeg",
-    #     "https://images-na.ssl-images-amazon.com/images/I/41NbuQ-wKPL._SX425_.jpg",
-    #     "https://cdn.shopclues.com/images1/thumbnails/92328/320/320/140786749-92328394-1539116494.jpg",
-    # ]
-    # PlantModel.create_table(read_capacity_units=1, write_capacity_units=1, wait=True)
-    # plants = PlantModel.query(token.user_pub_id)
-    # if len(list(plants)) <= 10:
-    #     plant = PlantModel()
-    #     plant.user_pub_id = token.user_pub_id
-    #     plant.max_moisture = 100
-    #     plant.min_moisture = 0
-    #     plant.name = "A Dynamo of a Plant"
-    #     plant.image_url = random.choice(plant_image_urls)
-    #     plant.save()
+    def initial_plant():
+        plant_image_urls = [
+            "https://cdn.bmstores.co.uk/images/hpcProductImage/imgFull/297350-Leafy-Plant-Pot.jpg",
+            "https://target.scene7.com/is/image/Target/GUEST_fc982b27-ef4f-48a3-bf11-a69d32cc91cc?wid=488&hei=488&fmt=pjpeg",
+            "https://images-na.ssl-images-amazon.com/images/I/41NbuQ-wKPL._SX425_.jpg",
+            "https://cdn.shopclues.com/images1/thumbnails/92328/320/320/140786749-92328394-1539116494.jpg",
+        ]
+        plants = PlantModel.query(token.user_pub_id)
+        if len(list(plants)) == 0:
+            plant = PlantModel()
+            plant.user_pub_id = token.user_pub_id
+            plant.max_moisture = 100
+            plant.min_moisture = 0
+            plant.name = "A Dynamo of a Plant"
+            plant.image_url = random.choice(plant_image_urls)
+            plant.save()
 
+    initial_plant()
     plants = PlantModel.query(token.user_pub_id)
     plants = [p.json() for p in plants]
     return jsonify({"plants": plants})
 
 
-@requires_valid_token
 @app.route('/api/v1/api_keys', methods=["GET"])
-def api_keys():
-    return jsonify({"api_keys": []})
+@requires_valid_token
+def api_keys(token):
+    def initial_api_key():
+        APIKeyModel.create_table(read_capacity_units=1, write_capacity_units=1)
+        keys = APIKeyModel.query(token.user_pub_id)
+        if len(list(keys)) == 0:
+            key = APIKeyModel()
+            key.user_pub_id = token.user_pub_id
+            key.save()
+
+    initial_api_key()
+    keys = APIKeyModel.query(token.user_pub_id)
+    keys = [p.json() for p in keys]
+    return jsonify({"api_keys": keys})
 
 
 @requires_valid_token
@@ -113,9 +125,9 @@ def plant(plant_id):
     return jsonify({})
 
 
-@requires_valid_api_key
 @app.route('/api/v1/plant/<plant_id>/moisture', methods=["POST"])
-def moisture(plant_id):
+@requires_valid_api_key
+def moisture(api_key, plant_id):
     return jsonify({
         "water_for": 0,
         "wait_for": 60,

@@ -52,12 +52,18 @@ class APIKeyModel(Model):
 
     def __init__(self, *args, **kwargs):
         Model.__init__(self, *args, **kwargs)
-        if self.pub_id is None:
-            self.pub_id = get_pub_id("api_key")
+        if self.api_key is None:
+            self.api_key = get_pub_id("api_key")
 
     @property
     def user(self):
         return UserModel.get(self.user_pub_id)
+
+    def json(self):
+      return {
+        "user_pub_id": self.user_pub_id,
+        "api_key": self.api_key,
+      }
 
     user_pub_id = UnicodeAttribute(hash_key=True)
     api_key = UnicodeAttribute()

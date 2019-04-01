@@ -3,7 +3,7 @@ import './App.css';
 import LandingPage from "./landingPage.js";
 import PlantsListPage from "./plantsListPage";
 import PlantDetailsPage from "./plantDetailsPage";
-import {auth, list_plants} from "./api"
+import {auth, list_plants, list_api_keys} from "./api"
 
 class App extends Component {
 
@@ -16,14 +16,19 @@ class App extends Component {
   }
 
   loginSuccess(response){
-    let state = this.state;
     auth(response).then(resp => {
       if(resp){
-        state.user = response.profileObj;
+          let state = this.state;
         list_plants().then(data => {
+          state.user = response.profileObj;
           console.log(data.plants);
           state.plants = data.plants;
-          this.setState(state);
+          list_api_keys().then(data => {
+            console.log(data.api_keys);
+            state.apiKeys = data.api_keys;
+            this.setState(state);
+          })
+
         });
       }
     });
@@ -45,7 +50,14 @@ class App extends Component {
       return <LandingPage loginSuccess={this.loginSuccess.bind(this)} loginFailure={this.loginFailure.bind(this)} />
     }
     if(this.state.plantPubId){
-      return <PlantDetailsPage name="Bob" imageUrl="https://cdn.shopclues.com/images1/thumbnails/92328/320/320/140786749-92328394-1539116494.jpg" />
+      let the_plant = null;
+      this.state.plants.forEach(plant => {
+        if(plant.pub_id === this.state.plantPubId){
+          the_plant = plant;
+        }
+      });
+      return <PlantDetailsPage
+        plant={the_plant} apiKeys={this.state.apiKeys} />
     }
 
     return <PlantsListPage plants={this.state.plants} plantSelected={this.plantSelected.bind(this)}/>

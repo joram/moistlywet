@@ -31,11 +31,20 @@ const exampleData = {
 
 class PlantDetailsPage extends Component {
   render() {
+    console.log(this.props.plant);
+    console.log(this.props.apiKeys);
+    let api_keys = [];
+    this.props.apiKeys.forEach(api_key => {
+      api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
+    });
+
     return <div className="plant">
       <div className="plant">
-        <img src={this.props.imageUrl} style={{maxWidth: "20vw"}}/>
-        <div style={{textAlign: "center"}}>{this.props.name}</div>
+        <img src={this.props.plant.image_url} style={{maxWidth: "20vw"}}/>
+        <div style={{textAlign: "center"}}>{this.props.plant.name}</div>
+        <div style={{textAlign: "center"}}>{this.props.plant.pub_id}</div>
       </div>
+      {api_keys}
       <Line data={exampleData} />
     </div>;
   }

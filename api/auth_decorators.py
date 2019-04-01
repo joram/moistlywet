@@ -1,3 +1,4 @@
+from functools import wraps
 import datetime
 from flask import jsonify, request
 from models import UserModel, AuthTokenModel
@@ -14,6 +15,7 @@ def _get_token():
 
 
 def requires_valid_token(func):
+    @wraps(func)
     def wrapper():
         token = _get_token()
         if token is not None:
@@ -29,6 +31,7 @@ def _has_valid_api_key():
 
 
 def requires_valid_api_key(func):
+    @wraps(func)
     def wrapper():
         if _has_valid_api_key():
             return func()

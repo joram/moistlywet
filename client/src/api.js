@@ -1,6 +1,9 @@
 let api_base_url = "https://api.moistlywet.com";
-api_base_url = "http://localhost:5000";
-let token = null
+if(window.location.hostname==="localhost") {
+  api_base_url = "http://localhost:5000";
+}
+
+let token = null;
 
 function post(path, data){
   return _fetch(path, data, "POST")
@@ -39,6 +42,10 @@ module.exports = {
 
   list_plants: function(){
     return get("/api/v1/plants")
+  },
+
+  list_api_keys: function(){
+    return get("/api/v1/api_keys")
   },
 
 };
