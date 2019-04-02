@@ -1,15 +1,26 @@
 # moistlywet
-Documentation and configuration for a plant moisture control module and API.
+Documentation and configuration for moistlywet.com, 
+a plant moisture control device,
+used to simulate the watering cycle of rain.
 
-## Running 
-`npm start`
 
-## Initial infrastructure thoughts
+## Client 
+A React app. Hosted out of an S3 bucket.
 
-### API/Web-UI Stack
-- Datastore: postgres RDS
-- Server: lambda (using zappa/flask)
-     - *Auth stuff:*
-     - API: using custom API keys per module
-     - Web: google-oauth
-- Client: react/S3 (hand bombing rest API usage?)
+*running locally*: `./scripts/run`
+
+*deploying*: `./scripts/deploy`
+
+
+## Server
+A flask app, deployed as lambda functions (using zappa).
+Storing it's data in dynamodb.
+
+*running locally*: `./scripts/run`
+
+*deploying*: `./scripts/deploy`
+
+
+## Device
+an ESP8266, running the python env,
+still figuring out the details there.
