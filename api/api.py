@@ -2,7 +2,7 @@ import random
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from auth_decorators import requires_valid_token, requires_valid_api_key
-from models import UserModel, AuthTokenModel, PlantModel, APIKeyModel
+from models import UserModel, AuthTokenModel, PlantModel, APIKeyModel, MoistureReadingModel
 
 app = Flask(__name__)
 CORS(app)
@@ -128,10 +128,23 @@ def plant(plant_id):
 @app.route('/api/v1/plant/<plant_id>/moisture', methods=["POST"])
 @requires_valid_api_key
 def moisture(api_key, plant_id):
-    return jsonify({
-        "water_for": 0,
-        "wait_for": 60,
-    })
+    for plant in PlantModel.query(api_key.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
+        reading = plant.add_moisture_reading(request.get_json().get("value"))
+        return jsonify({
+            "water_for": 0,
+            "wait_for": 60,
+        })
+
+
+@app.route('/api/v1/plant/<plant_id>/moisture', methods=["GET"])
+@requires_valid_token
+def moisture_get(token, plant_id):
+    import datetime
+    for plant in PlantModel.query(token.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
+        start = datetime.datetime.utcnow() - datetime.timedelta(hours=24)
+        qs = MoistureReadingModel.query(plant.pub_id, MoistureReadingModel.created >= start)
+        results = [r.json() for r in qs]
+        return jsonify({"data": results})
 
 
 if __name__ == '__main__':

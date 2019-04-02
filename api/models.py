@@ -66,7 +66,7 @@ class APIKeyModel(Model):
       }
 
     user_pub_id = UnicodeAttribute(hash_key=True)
-    api_key = UnicodeAttribute()
+    api_key = UnicodeAttribute(range_key=True)
 
 
 class PlantModel(Model):
@@ -93,6 +93,15 @@ class PlantModel(Model):
             "max_moisture": self.max_moisture,
         }
 
+    def add_moisture_reading(self, value):
+        MoistureReadingModel.create_table(read_capacity_units=1, write_capacity_units=1)
+        reading = MoistureReadingModel()
+        reading.plant_pub_id = self.pub_id
+        reading.value = value
+        reading.created = datetime.datetime.utcnow()
+        reading.save()
+        return reading
+
     user_pub_id = UnicodeAttribute(hash_key=True)
     pub_id = UnicodeAttribute(range_key=True)
     name = UnicodeAttribute(null=True)
@@ -106,11 +115,12 @@ class MoistureReadingModel(Model):
         table_name = "moistlywet_moisture_readings"
         region = 'us-west-1'
 
-    def __init__(self, *args, **kwargs):
-        Model.__init__(self, *args, **kwargs)
-        if self.pub_id is None:
-            self.pub_id = get_pub_id("reading")
-
+    def json(self):
+        return {
+            "plant_pub_id": self.plant_pub_id,
+            "value": self.value,
+            "created": self.created.timestamp(),
+        }
     plant_pub_id = UnicodeAttribute(hash_key=True)
-    reading = NumberAttribute()
-    created = UTCDateTimeAttribute()
+    value = NumberAttribute()
+    created = UTCDateTimeAttribute(range_key=True)

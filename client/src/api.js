@@ -48,4 +48,8 @@ module.exports = {
     return get("/api/v1/api_keys")
   },
 
+  list_plant_moisture: function(plant_pub_id){
+    return get(`/api/v1/plant/${plant_pub_id}/moisture`)
+  },
+
 };

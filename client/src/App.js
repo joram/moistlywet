@@ -3,7 +3,7 @@ import './App.css';
 import LandingPage from "./landingPage.js";
 import PlantsListPage from "./plantsListPage";
 import PlantDetailsPage from "./plantDetailsPage";
-import {auth, list_plants, list_api_keys} from "./api"
+import {auth, list_plants, list_api_keys, list_plant_moisture} from "./api"
 
 class App extends Component {
 
@@ -18,17 +18,15 @@ class App extends Component {
   loginSuccess(response){
     auth(response).then(resp => {
       if(resp){
-          let state = this.state;
-        list_plants().then(data => {
-          state.user = response.profileObj;
-          console.log(data.plants);
-          state.plants = data.plants;
-          list_api_keys().then(data => {
-            console.log(data.api_keys);
-            state.apiKeys = data.api_keys;
+        list_plants().then(plants_data => {
+          list_api_keys().then(api_keys_data => {
+            console.log(api_keys_data.api_keys);
+            let state = this.state;
+            state.user = response.profileObj;
+            state.plants = plants_data.plants;
+            state.apiKeys = api_keys_data.api_keys;
             this.setState(state);
           })
-
         });
       }
     });
@@ -41,8 +39,12 @@ class App extends Component {
 
   plantSelected(data){
     let state = this.state;
-    state.plantPubId = data.pubId;
-    this.setState(state);
+    list_plant_moisture(data.pubId).then(plant_moisture_data => {
+      state.plantPubId = data.pubId;
+      state.moistureData = plant_moisture_data.data;
+      console.log(plant_moisture_data);
+      this.setState(state);
+    });
   }
 
   render() {

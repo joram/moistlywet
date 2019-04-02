@@ -1,7 +1,7 @@
 from functools import wraps
 import datetime
 from flask import jsonify, request
-from models import UserModel, AuthTokenModel
+from models import UserModel, AuthTokenModel, APIKeyModel
 
 
 def _get_token():
@@ -16,25 +16,28 @@ def _get_token():
 
 def requires_valid_token(func):
     @wraps(func)
-    def wrapper():
+    def wrapper(*args, **kwargs):
         token = _get_token()
         if token is not None:
             request.token = token
-            return func(token)
+            return func(token=token, *args, **kwargs)
         return jsonify({"error": "invalid token"})
     return wrapper
 
 
-def _has_valid_api_key():
+def _get_api_key():
     api_key = request.headers.get("MOISTLY-WET-API-KEY")
-    return True
+    for key in APIKeyModel.scan(APIKeyModel.api_key.startswith(api_key)):
+        return key
+    return None
 
 
 def requires_valid_api_key(func):
     @wraps(func)
-    def wrapper():
-        if _has_valid_api_key():
-            return func()
+    def wrapper(*args, **kwargs):
+        key = _get_api_key()
+        if key is not None:
+            return func(api_key=key, *args, **kwargs)
         return jsonify({"error": "invalid api key"})
     return wrapper
 
