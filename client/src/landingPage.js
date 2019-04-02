@@ -20,6 +20,9 @@ let tagline_options = [
   "put your moisture in the cloud",
   "we want to get you wet... _down there_",
   "for a happy, healthy bush",
+  "fronds with benefits",
+  "sensational plant action",
+  "more growth than you might expect"
 ];
 
 let background_image_options = [
