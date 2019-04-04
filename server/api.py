@@ -129,7 +129,7 @@ def plant(plant_id):
 @requires_valid_api_key
 def moisture(api_key, plant_id):
     for plant in PlantModel.query(api_key.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
-        reading = plant.add_moisture_reading(request.get_json().get("value"))
+        reading = plant.add_moisture_reading(request.get_json().get("moisture", -1))
         return jsonify({
             "water_for": 0,
             "wait_for": 60,
