@@ -59,7 +59,7 @@ class App extends Component {
         }
       });
       return <PlantDetailsPage
-        plant={the_plant} apiKeys={this.state.apiKeys} />
+        plant={the_plant} apiKeys={this.state.apiKeys} data={this.state.moistureData} />
     }
 
     return <PlantsListPage plants={this.state.plants} plantSelected={this.plantSelected.bind(this)}/>

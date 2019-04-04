@@ -3,10 +3,9 @@ import './App.css';
 import {Line} from 'react-chartjs-2';
 
 const exampleData = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
   datasets: [
     {
-      label: 'My First dataset',
+      label: 'Moisture',
       fill: false,
       lineTension: 0.1,
       backgroundColor: 'rgba(75,192,192,0.4)',
@@ -31,21 +30,54 @@ const exampleData = {
 
 class PlantDetailsPage extends Component {
   render() {
-    console.log(this.props.plant);
-    console.log(this.props.apiKeys);
     let api_keys = [];
     this.props.apiKeys.forEach(api_key => {
       api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
     });
 
+    let labels = [];
+    let data = [];
+    this.props.data.forEach(datum => {
+      if(datum.value===0){return}
+      if(datum.value===1024){return}
+      let t = new Date(datum.created*1000);
+      labels.push(t);
+      data.push({
+        t: t,
+        y: datum.value,
+      });
+    });
+
+    let graphjs_data = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Moisture',
+          borderColor: 'rgba(75,192,192,1)',
+          data: data
+        }
+      ]
+    };
+    console.log(graphjs_data)
+
     return <div className="plant">
-      <div className="plant">
-        <img src={this.props.plant.image_url} style={{maxWidth: "20vw"}}/>
-        <div style={{textAlign: "center"}}>{this.props.plant.name}</div>
-        <div style={{textAlign: "center"}}>{this.props.plant.pub_id}</div>
-      </div>
-      {api_keys}
-      <Line data={exampleData} />
+      <table style={{"width":"100%"}}>
+        <tbody>
+          <tr>
+            <td>
+              <div className="plant">
+                <img src={this.props.plant.image_url} style={{maxWidth: "20vw"}}/>
+                <div style={{textAlign: "center"}}>{this.props.plant.name}</div>
+                <div style={{textAlign: "center"}}>{this.props.plant.pub_id}</div>
+                <div style={{textAlign: "center"}}>{api_keys}</div>
+              </div>
+            </td>
+            <td>
+              <Line data={graphjs_data} />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>;
   }
 }

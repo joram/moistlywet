@@ -3,3 +3,4 @@
 *.env
 *__pycache__*
 device/config.json
+webrepl*
