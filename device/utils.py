@@ -17,21 +17,29 @@ def call_home(reading, api_key, plant_id):
     return {}
 
 
-def read_moisture():
+def read_moisture(num_readings=20):
     # https://cdn-learn.adafruit.com/assets/assets/000/046/249/original/adafruit_products_Huzzah_ESP8266_Pinout_v1.2-1.png?1504885873
     # pin 14 -> vcc
     # pin 11 (IO2) (ADC) -> sig
     # grnd
 
-    pin2 = Pin(2)
-    pwm = PWM(pin2, freq=500, duty=128)  # create and configure in one go
-    time.sleep(1)
-    adc = ADC(0)  # create ADC object on ADC pin
-    v = adc.read()
-    pwm.deinit()
-    pin2.off()
+    pin2 = Pin(14)
+    adc = ADC(0)
+    readings = []
+    while len(readings) < num_readings:
 
-    return v
+        pwm = PWM(pin2, freq=1000, duty=128)
+        time.sleep(0.1)
+        v = adc.read()
+        pwm.deinit()
+        pin2.off()
+        time.sleep(0.1)
+
+        if v not in [1024, 0]:
+            readings.append(v)
+
+    avg = int(sum(readings)/len(readings))
+    return avg
 
 
 def do_connect(ssid, password):

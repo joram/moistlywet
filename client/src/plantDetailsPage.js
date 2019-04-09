@@ -2,32 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import {Line} from 'react-chartjs-2';
 
-const exampleData = {
-  datasets: [
-    {
-      label: 'Moisture',
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: 'rgba(75,192,192,0.4)',
-      borderColor: 'rgba(75,192,192,1)',
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: 'rgba(75,192,192,1)',
-      pointBackgroundColor: '#fff',
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      data: [65, 59, 80, 81, 56, 55, 40]
-    }
-  ]
-};
-
 class PlantDetailsPage extends Component {
   render() {
     let api_keys = [];
@@ -56,24 +30,44 @@ class PlantDetailsPage extends Component {
           borderColor: 'rgba(75,192,192,1)',
           data: data
         }
-      ]
+      ],
+
     };
-    console.log(graphjs_data)
+    let graphjs_options = {
+      scales: {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    displayFormats: {
+                        quarter: 'MMM YYYY'
+                    }
+                }
+            }]
+        }
+    };
+
+    let style= {
+      border: "solid thin black",
+    };
 
     return <div className="plant">
       <table style={{"width":"100%"}}>
         <tbody>
           <tr>
-            <td>
+            <td style={style}>
               <div className="plant">
-                <img src={this.props.plant.image_url} style={{maxWidth: "20vw"}}/>
                 <div style={{textAlign: "center"}}>{this.props.plant.name}</div>
+                <img src={this.props.plant.image_url} style={{maxWidth: "25vw",
+                    display: "block",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                }}/>
                 <div style={{textAlign: "center"}}>{this.props.plant.pub_id}</div>
                 <div style={{textAlign: "center"}}>{api_keys}</div>
               </div>
             </td>
-            <td>
-              <Line data={graphjs_data} />
+            <td style={style}>
+              <Line data={graphjs_data} options={graphjs_options} />
             </td>
           </tr>
         </tbody>

@@ -20,7 +20,6 @@ class App extends Component {
       if(resp){
         list_plants().then(plants_data => {
           list_api_keys().then(api_keys_data => {
-            console.log(api_keys_data.api_keys);
             let state = this.state;
             state.user = response.profileObj;
             state.plants = plants_data.plants;
@@ -38,13 +37,16 @@ class App extends Component {
   }
 
   plantSelected(data){
+    console.log(data.action, data.pubId);
     let state = this.state;
-    list_plant_moisture(data.pubId).then(plant_moisture_data => {
-      state.plantPubId = data.pubId;
-      state.moistureData = plant_moisture_data.data;
-      console.log(plant_moisture_data);
-      this.setState(state);
-    });
+    if(data.action === "details") {
+      list_plant_moisture(data.pubId).then(plant_moisture_data => {
+        state.plantPubId = data.pubId;
+        state.moistureData = plant_moisture_data.data;
+        console.log(plant_moisture_data);
+        this.setState(state);
+      });
+    }
   }
 
   render() {
