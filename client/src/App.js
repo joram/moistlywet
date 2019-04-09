@@ -3,6 +3,7 @@ import './App.css';
 import LandingPage from "./landingPage.js";
 import PlantsListPage from "./plantsListPage";
 import PlantDetailsPage from "./plantDetailsPage";
+import PlantEditPage from "./plantEditPage";
 import {auth, list_plants, list_api_keys, list_plant_moisture} from "./api"
 
 class App extends Component {
@@ -56,6 +57,23 @@ class App extends Component {
         this.setState(state);
       });
     }
+
+    if(data.action === "edit") {
+      state.view = "edit";
+      state.plantPubId = data.pubId;
+      this.setState(state);
+    }
+
+  }
+
+  currentPlant(){
+    let the_plant = null;
+    this.state.plants.forEach(plant => {
+      if(plant.pub_id === this.state.plantPubId){
+        the_plant = plant;
+      }
+    });
+    return the_plant;
   }
 
   render() {
@@ -70,15 +88,12 @@ class App extends Component {
     }
 
     if(this.state.view === "details"){
-      let the_plant = null;
-      this.state.plants.forEach(plant => {
-        if(plant.pub_id === this.state.plantPubId){
-          the_plant = plant;
-        }
-      });
-      return <PlantDetailsPage plant={the_plant} apiKeys={this.state.apiKeys} data={this.state.moistureData} onClick={this.handleClickEvent.bind(this)}/>
+      return <PlantDetailsPage plant={this.currentPlant()} apiKeys={this.state.apiKeys} data={this.state.moistureData} onClick={this.handleClickEvent.bind(this)}/>
     }
 
+    if(this.state.view === "edit") {
+      return <PlantEditPage plant={this.currentPlant()} />
+    }
 
     return <PlantsListPage plants={this.state.plants} onClick={this.handleClickEvent.bind(this)}/>
   }
