@@ -11,6 +11,7 @@ class App extends Component {
     super(props);
     this.state = {
       user: null,
+      view: null,
       plantPubId: null,
     };
   }
@@ -24,6 +25,7 @@ class App extends Component {
             state.user = response.profileObj;
             state.plants = plants_data.plants;
             state.apiKeys = api_keys_data.api_keys;
+            state.view = "listPlants";
             this.setState(state);
           })
         });
@@ -36,11 +38,18 @@ class App extends Component {
     console.log(response);
   }
 
-  plantSelected(data){
+  handleClickEvent(data){
     console.log(data.action, data.pubId);
     let state = this.state;
+
+    if(data.action === "listPlants") {
+        state.view = "listPlants";
+        this.setState(state);
+    }
+
     if(data.action === "details") {
       list_plant_moisture(data.pubId).then(plant_moisture_data => {
+        state.view = "details";
         state.plantPubId = data.pubId;
         state.moistureData = plant_moisture_data.data;
         console.log(plant_moisture_data);
@@ -50,21 +59,28 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.view);
+
     if(this.state.user === null){
       return <LandingPage loginSuccess={this.loginSuccess.bind(this)} loginFailure={this.loginFailure.bind(this)} />
     }
-    if(this.state.plantPubId){
+
+    if(this.state.view === "listPlants"){
+      return <PlantsListPage plants={this.state.plants} onClick={this.handleClickEvent.bind(this)}/>
+    }
+
+    if(this.state.view === "details"){
       let the_plant = null;
       this.state.plants.forEach(plant => {
         if(plant.pub_id === this.state.plantPubId){
           the_plant = plant;
         }
       });
-      return <PlantDetailsPage
-        plant={the_plant} apiKeys={this.state.apiKeys} data={this.state.moistureData} />
+      return <PlantDetailsPage plant={the_plant} apiKeys={this.state.apiKeys} data={this.state.moistureData} onClick={this.handleClickEvent.bind(this)}/>
     }
 
-    return <PlantsListPage plants={this.state.plants} plantSelected={this.plantSelected.bind(this)}/>
+
+    return <PlantsListPage plants={this.state.plants} onClick={this.handleClickEvent.bind(this)}/>
   }
 }
 

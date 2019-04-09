@@ -106,7 +106,7 @@ class PlantsListPage extends Component {
         imageUrl={plant.image_url}
         pubId={plant.pub_id}
         key={plant.pub_id}
-        onClick={this.props.plantSelected}
+        onClick={this.props.onClick}
       />)
     });
 

@@ -3,6 +3,13 @@ import './App.css';
 import {Line} from 'react-chartjs-2';
 
 class PlantDetailsPage extends Component {
+
+  onClickBack(e){
+    this.props.onClick({
+      action: "listPlants",
+    })
+  }
+
   render() {
     let api_keys = [];
     this.props.apiKeys.forEach(api_key => {
@@ -51,16 +58,18 @@ class PlantDetailsPage extends Component {
     };
 
     return <div className="plant">
+      <div onClick={this.onClickBack.bind(this)}>back</div>
       <table style={{"width":"100%"}}>
         <tbody>
           <tr>
             <td style={style}>
               <div className="plant">
                 <div style={{textAlign: "center"}}>{this.props.plant.name}</div>
-                <img src={this.props.plant.image_url} style={{maxWidth: "25vw",
-                    display: "block",
-                    marginLeft: "auto",
-                    marginRight: "auto",
+                <img src={this.props.plant.image_url} style={{
+                  maxWidth: "25vw",
+                  display: "block",
+                  marginLeft: "auto",
+                  marginRight: "auto",
                 }}/>
                 <div style={{textAlign: "center"}}>{this.props.plant.pub_id}</div>
                 <div style={{textAlign: "center"}}>{api_keys}</div>
