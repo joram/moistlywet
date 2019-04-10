@@ -52,4 +52,8 @@ module.exports = {
     return get(`/api/v1/plant/${plant_pub_id}/moisture`)
   },
 
+  edit_plant: function(plant_pub_id, data){
+    return post(`/api/v1/plant/${plant_pub_id}`, data)
+  },
+
 };

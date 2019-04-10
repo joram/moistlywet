@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import { Form, Field } from 'react-final-form'
 import ImageUploader from 'react-images-upload';
+import {edit_plant} from './api'
+
 
 class PlantEditPage extends Component {
 
@@ -9,8 +11,8 @@ class PlantEditPage extends Component {
     this.state = {pictures: []}
   }
 
-  onSubmit(e){
-    console.log(e)
+  onSubmit(data){
+    edit_plant(this.props.plant.pub_id, data)
   }
 
   onDrop(picture) {

@@ -119,10 +119,16 @@ def api_key():
     return jsonify({"api_keys": []})
 
 
+@app.route('/api/v1/plant/<plant_id>', methods=["POST"])
 @requires_valid_token
-@app.route('/api/v1/plant', methods=["POST"])
-def plant(plant_id):
-    return jsonify({})
+def plant(token, plant_id):
+    for plant in PlantModel.query(token.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
+        plant.name = request.json.get("name")
+        plant.image_url = request.json.get("image_url")
+        plant.max_moisture = request.json.get("max_moisture")
+        plant.min_moisture = request.json.get("min_moisture")
+        plant.save()
+        return jsonify({})
 
 
 @app.route('/api/v1/plant/<plant_id>/moisture', methods=["POST"])
