@@ -4,7 +4,11 @@ from flask_cors import CORS
 from auth_decorators import requires_valid_token, requires_valid_api_key
 from models import UserModel, AuthTokenModel, PlantModel, APIKeyModel, MoistureReadingModel
 
+UPLOAD_FOLDER = '/path/to/the/uploads'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app)
 
 
@@ -122,11 +126,13 @@ def api_key():
 @app.route('/api/v1/plant/<plant_id>', methods=["POST"])
 @requires_valid_token
 def plant(token, plant_id):
+    img = request.form.get("image_file")
+    print(type(img))
     for plant in PlantModel.query(token.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
-        plant.name = request.json.get("name")
-        plant.image_url = request.json.get("image_url")
-        plant.max_moisture = request.json.get("max_moisture")
-        plant.min_moisture = request.json.get("min_moisture")
+        plant.name = request.form.get("name")
+        # plant.image_url = request.form.get("image_url")
+        plant.max_moisture = int(request.form.get("max_moisture"))
+        plant.min_moisture = int(request.form.get("min_moisture"))
         plant.save()
         return jsonify({})
 

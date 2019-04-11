@@ -1,7 +1,50 @@
 import time
 import urequests
 import network
-from machine import ADC, Pin, PWM
+
+
+def _get_readings(num_readings, pwr_pin, adc):
+    readings = []
+    import time
+
+    while len(readings) < num_readings:
+        pwr_pin.on()
+        time.sleep(0.01)
+        v = adc.read()
+        time.sleep(0.05)
+        pwr_pin.off()
+
+        print(v)
+        if v not in [1024, 0]:
+            readings.append(v)
+    return readings
+
+
+def avg(values):
+    return int(sum(values)/len(values))
+
+
+def read_moisture(num_readings=21):
+    from machine import Pin, ADC
+    if num_readings % 2 == 0:
+        num_readings += 1
+    readings = _get_readings(num_readings, Pin(14), ADC(0))
+    if num_readings <= 3:
+        return int(sum(readings)/len(readings))
+    median_index = int((num_readings-1)/2)
+    readings = sorted(readings)
+
+    min_index = int(median_index - median_index/2)
+    max_index = int(median_index + median_index/2)
+    sensible_values = readings[min_index:max_index]
+    median = readings[median_index]
+    average = avg(sensible_values)
+    total_average = avg(readings)
+
+    print("all readings: ", readings)
+    print("sensible readings: ", sensible_values)
+    print("median:%d, mid-50-avg:%d, avg:%d" % (median, average, total_average))
+    return avg([median, average, total_average])
 
 
 def call_home(reading, api_key, plant_id):
@@ -15,31 +58,6 @@ def call_home(reading, api_key, plant_id):
     except Exception as e:
         print(e)
     return {}
-
-
-def read_moisture(num_readings=20):
-    # https://cdn-learn.adafruit.com/assets/assets/000/046/249/original/adafruit_products_Huzzah_ESP8266_Pinout_v1.2-1.png?1504885873
-    # pin 14 -> vcc
-    # pin 11 (IO2) (ADC) -> sig
-    # grnd
-
-    pin2 = Pin(14)
-    adc = ADC(0)
-    readings = []
-    while len(readings) < num_readings:
-
-        pwm = PWM(pin2, freq=1000, duty=128)
-        time.sleep(0.1)
-        v = adc.read()
-        pwm.deinit()
-        pin2.off()
-        time.sleep(0.1)
-
-        if v not in [1024, 0]:
-            readings.append(v)
-
-    avg = int(sum(readings)/len(readings))
-    return avg
 
 
 def do_connect(ssid, password):

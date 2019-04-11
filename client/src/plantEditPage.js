@@ -8,16 +8,22 @@ class PlantEditPage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {pictures: []}
+    this.state = {picture:null}
   }
 
   onSubmit(data){
-    edit_plant(this.props.plant.pub_id, data)
+    const formData = new FormData();
+    console.log(this.state.picture)
+    formData.append("image_file", this.state.picture);
+    formData.append("name", data.name);
+    formData.append("min_moisture", data.min_moisture);
+    formData.append("max_moisture", data.max_moisture);
+    edit_plant(this.props.plant.pub_id, formData)
   }
 
   onDrop(picture) {
     this.setState({
-      pictures: this.state.pictures.concat(picture),
+      picture: picture,
     });
   }
 

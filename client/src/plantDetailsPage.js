@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import {Line} from 'react-chartjs-2';
+import "chartjs-plugin-annotation";
 
 class PlantDetailsPage extends Component {
 
@@ -42,15 +43,40 @@ class PlantDetailsPage extends Component {
     };
     let graphjs_options = {
       scales: {
-            xAxes: [{
-                type: 'time',
-                time: {
-                    displayFormats: {
-                        quarter: 'MMM YYYY'
-                    }
-                }
-            }]
-        }
+        xAxes: [{
+          type: 'time',
+          time: {
+            displayFormats: {
+              quarter: 'MMM YYYY'
+            }
+          }
+        }]
+      },
+      annotation: {
+        annotations: [{
+          type: 'line',
+          mode: 'horizontal',
+          scaleID: 'y-axis-0',
+          value: this.props.plant.min_moisture,
+          borderColor: 'rgb(192, 75, 75)',
+          borderWidth: 2,
+          label: {
+            enabled: false,
+            content: 'Min Moisture'
+          }
+        },{
+          type: 'line',
+          mode: 'horizontal',
+          scaleID: 'y-axis-0',
+          value: this.props.plant.max_moisture,
+          borderColor: 'rgb(75, 75, 192)',
+          borderWidth: 2,
+          label: {
+            enabled: false,
+            content: 'Max Moisture'
+          }
+        }]
+      }
     };
 
     let style= {

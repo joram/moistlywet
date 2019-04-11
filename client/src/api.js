@@ -5,23 +5,38 @@ if(window.location.hostname==="localhost") {
 
 let token = null;
 
+function post_form(path, data){
+  let json_headers = {
+    'Accept': 'application/json',
+    'MOISTLY-WET-TOKEN': token,
+  }
+  return _fetch(path, data, "POST", json_headers)
+}
+
 function post(path, data){
-  return _fetch(path, data, "POST")
+  let json_headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'MOISTLY-WET-TOKEN': token,
+  }
+  return _fetch(path, data, "POST", json_headers)
 }
 
 function get(path, data){
-  return _fetch(path, data, "GET")
+  let json_headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'MOISTLY-WET-TOKEN': token,
+  }
+
+  return _fetch(path, data, "GET", json_headers)
 }
 
-function _fetch(path, data, method){
+function _fetch(path, data, method, headers){
   return fetch(`${api_base_url}${path}`, {
     method: method,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'MOISTLY-WET-TOKEN': token,
-    },
-    body: JSON.stringify(data)
+    headers: headers,
+    body: data
   }).then(response => {
     return response.json()
   })
@@ -31,7 +46,7 @@ function _fetch(path, data, method){
 module.exports = {
 
   auth: function(userData) {
-    return post("/api/v1/auth", userData).then( resp => {
+    return post("/api/v1/auth", JSON.stringify(userData)).then( resp => {
       if(resp.success){
         token = resp.token;
         return true
@@ -52,8 +67,8 @@ module.exports = {
     return get(`/api/v1/plant/${plant_pub_id}/moisture`)
   },
 
-  edit_plant: function(plant_pub_id, data){
-    return post(`/api/v1/plant/${plant_pub_id}`, data)
+  edit_plant: function(plant_pub_id, data, image){
+    return post_form(`/api/v1/plant/${plant_pub_id}`, data)
   },
 
 };
