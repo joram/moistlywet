@@ -2,7 +2,8 @@ import random
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from auth_decorators import requires_valid_token, requires_valid_api_key
-from models import UserModel, AuthTokenModel, PlantModel, APIKeyModel, MoistureReadingModel
+from models import UserModel, AuthTokenModel, PlantModel, APIKeyModel, MoistureReadingModel, MetricModel
+import datetime
 
 UPLOAD_FOLDER = '/path/to/the/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -137,26 +138,39 @@ def plant(token, plant_id):
         return jsonify({})
 
 
-@app.route('/api/v1/plant/<plant_id>/moisture', methods=["POST"])
+@app.route('/api/v1/plant/<plant_id>/<metric_type>', methods=["POST"])
 @requires_valid_api_key
-def moisture(api_key, plant_id):
-    for plant in PlantModel.query(api_key.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
-        reading = plant.add_moisture_reading(request.get_json().get("moisture", -1))
-        return jsonify({
-            "water_for": 0,
-            "wait_for": 60,
-        })
+def moisture(api_key, plant_id, metric_type):
+    if metric_type not in ["moisture", "temperature"]:
+        return jsonify({"error": f"unknown metric type {metric_type}"})
+
+    plant_qs = PlantModel.query(api_key.user_pub_id, PlantModel.pub_id.startswith(plant_id))
+    plant = list(plant_qs)[0]
+
+    data = request.get_json()
+    key = "moisture" if metric_type == "moisture" else "value"
+    metric_value = data.get(key, -1)
+    reading = plant.add_metric(metric_type, metric_value)
+    return jsonify({
+        "water_for": 0,
+        "wait_for": 60,
+    })
 
 
-@app.route('/api/v1/plant/<plant_id>/moisture', methods=["GET"])
+@app.route('/api/v1/plant/<plant_id>/<metric_type>', methods=["GET"])
 @requires_valid_token
-def moisture_get(token, plant_id):
-    import datetime
-    for plant in PlantModel.query(token.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
-        start = datetime.datetime.utcnow() - datetime.timedelta(hours=24)
-        qs = MoistureReadingModel.query(plant.pub_id, MoistureReadingModel.created >= start)
-        results = [r.json() for r in qs]
-        return jsonify({"data": results})
+def moisture_get(token, plant_id, metric_type):
+    if metric_type not in ["moisture", "temperature"]:
+        return jsonify({"error": f"unknown metric type {metric_type}"})
+
+    plant_qs = PlantModel.query(token.user_pub_id, PlantModel.pub_id.startswith(plant_id))
+    plant = list(plant_qs)[0]
+    start = datetime.datetime.utcnow() - datetime.timedelta(hours=24)
+    model_class = MoistureReadingModel if metric_type == "moisture" else MetricModel
+
+    qs = model_class.query(plant.pub_id, MoistureReadingModel.created >= start)
+    results = [r.json() for r in qs]
+    return jsonify({"data": results})
 
 
 if __name__ == '__main__':

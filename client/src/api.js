@@ -67,6 +67,10 @@ module.exports = {
     return get(`/api/v1/plant/${plant_pub_id}/moisture`)
   },
 
+  list_plant_temperature: function(plant_pub_id){
+    return get(`/api/v1/plant/${plant_pub_id}/temperature`)
+  },
+
   edit_plant: function(plant_pub_id, data, image){
     return post_form(`/api/v1/plant/${plant_pub_id}`, data)
   },

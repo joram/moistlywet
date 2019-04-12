@@ -11,15 +11,10 @@ class PlantDetailsPage extends Component {
     })
   }
 
-  render() {
-    let api_keys = [];
-    this.props.apiKeys.forEach(api_key => {
-      api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
-    });
-
+  _create_graphjs_data(raw_data, metric_name){
     let labels = [];
     let data = [];
-    this.props.data.forEach(datum => {
+    raw_data.forEach(datum => {
       if(datum.value===0){return}
       if(datum.value===1024){return}
       let t = new Date(datum.created*1000);
@@ -34,7 +29,7 @@ class PlantDetailsPage extends Component {
       labels: labels,
       datasets: [
         {
-          label: 'Moisture',
+          label: metric_name,
           borderColor: 'rgba(75,192,192,1)',
           data: data
         }
@@ -78,6 +73,19 @@ class PlantDetailsPage extends Component {
         }]
       }
     };
+    return {
+      data: graphjs_data,
+      options: graphjs_options,
+    }
+  }
+  render() {
+    let api_keys = [];
+    this.props.apiKeys.forEach(api_key => {
+      api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
+    });
+
+    let moisture_config = this._create_graphjs_data(this.props.data.moisture, "moisture");
+    let temperature_config = this._create_graphjs_data(this.props.data.temperature, "temperature");
 
     let style= {
       border: "solid thin black",
@@ -102,7 +110,8 @@ class PlantDetailsPage extends Component {
               </div>
             </td>
             <td style={style}>
-              <Line data={graphjs_data} options={graphjs_options} />
+              <Line data={moisture_config.data} options={moisture_config.options} />
+              <Line data={temperature_config.data} options={temperature_config.options} />
             </td>
           </tr>
         </tbody>

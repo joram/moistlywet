@@ -4,7 +4,7 @@ import LandingPage from "./landingPage.js";
 import PlantsListPage from "./plantsListPage";
 import PlantDetailsPage from "./plantDetailsPage";
 import PlantEditPage from "./plantEditPage";
-import {auth, list_plants, list_api_keys, list_plant_moisture} from "./api"
+import {auth, list_plants, list_api_keys, list_plant_moisture, list_plant_temperature} from "./api"
 
 class App extends Component {
 
@@ -50,11 +50,15 @@ class App extends Component {
 
     if(data.action === "details") {
       list_plant_moisture(data.pubId).then(plant_moisture_data => {
-        state.view = "details";
-        state.plantPubId = data.pubId;
-        state.moistureData = plant_moisture_data.data;
-        console.log(plant_moisture_data);
-        this.setState(state);
+        list_plant_temperature(data.pubId).then(plant_temperature_data => {
+          state.view = "details";
+          state.plantPubId = data.pubId;
+          state.moistureData = plant_moisture_data.data;
+          state.temperatureData = plant_temperature_data.data;
+          console.log(plant_moisture_data);
+          console.log(plant_temperature_data);
+          this.setState(state);
+        });
       });
     }
 
@@ -88,7 +92,11 @@ class App extends Component {
     }
 
     if(this.state.view === "details"){
-      return <PlantDetailsPage plant={this.currentPlant()} apiKeys={this.state.apiKeys} data={this.state.moistureData} onClick={this.handleClickEvent.bind(this)}/>
+      let data = {
+        moisture:this.state.moistureData,
+        temperature: this.state.temperatureData,
+      };
+      return <PlantDetailsPage plant={this.currentPlant()} apiKeys={this.state.apiKeys} data={data} onClick={this.handleClickEvent.bind(this)}/>
     }
 
     if(this.state.view === "edit") {
