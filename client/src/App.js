@@ -49,7 +49,7 @@ class App extends Component {
     }
 
     if(data.action === "details") {
-      list_plant_moisture(data.pubId).then(plant_moisture_data => {
+      list_plant_moisture(data.pubId, 24).then(plant_moisture_data => {
         list_plant_temperature(data.pubId).then(plant_temperature_data => {
           state.view = "details";
           state.plantPubId = data.pubId;

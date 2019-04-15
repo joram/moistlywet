@@ -2,13 +2,34 @@ import React, { Component } from 'react';
 import './App.css';
 import {Line} from 'react-chartjs-2';
 import "chartjs-plugin-annotation";
+import {list_plant_moisture, list_plant_temperature} from "./api";
 
 class PlantDetailsPage extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: 24,
+      moistureData: this.props.data.moisture,
+      temperatureData: this.props.data.temperature,
+    }
+  }
   onClickBack(e){
     this.props.onClick({
       action: "listPlants",
     })
+  }
+
+  onHistoryChange(e){
+      let state = this.state;
+      state.history = parseInt(e.target.value);
+      list_plant_moisture(this.props.plant.pub_id, state.history).then(plant_moisture_data => {
+        list_plant_temperature(this.props.plant.pub_id).then(plant_temperature_data => {
+          state.moistureData = plant_moisture_data.data;
+          state.temperatureData = plant_temperature_data.data;
+          this.setState(state);
+        });
+      });
   }
 
   _create_graphjs_data(raw_data, metric_name){
@@ -78,14 +99,15 @@ class PlantDetailsPage extends Component {
       options: graphjs_options,
     }
   }
+
   render() {
     let api_keys = [];
     this.props.apiKeys.forEach(api_key => {
       api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
     });
 
-    let moisture_config = this._create_graphjs_data(this.props.data.moisture, "moisture");
-    let temperature_config = this._create_graphjs_data(this.props.data.temperature, "temperature");
+    let moisture_config = this._create_graphjs_data(this.state.moistureData, "moisture");
+    let temperature_config = this._create_graphjs_data(this.state.temperatureData, "temperature");
 
     let style= {
       border: "solid thin black",
@@ -110,6 +132,13 @@ class PlantDetailsPage extends Component {
               </div>
             </td>
             <td style={style}>
+              <select onChange={this.onHistoryChange.bind(this)}>
+                <option value="1">1hr</option>
+                <option value="12">12hrs</option>
+                <option value="24">day</option>
+                <option value="72">3 days</option>
+                <option value="168">week</option>
+              </select>
               <Line data={moisture_config.data} options={moisture_config.options} />
               <Line data={temperature_config.data} options={temperature_config.options} />
             </td>

@@ -160,12 +160,14 @@ def moisture(api_key, plant_id, metric_type):
 @app.route('/api/v1/plant/<plant_id>/<metric_type>', methods=["GET"])
 @requires_valid_token
 def moisture_get(token, plant_id, metric_type):
+    hours = int(request.args.get("hours", 24))
+    hours = min(hours, 24*7)
     if metric_type not in ["moisture", "temperature"]:
         return jsonify({"error": f"unknown metric type {metric_type}"})
 
     plant_qs = PlantModel.query(token.user_pub_id, PlantModel.pub_id.startswith(plant_id))
     plant = list(plant_qs)[0]
-    start = datetime.datetime.utcnow() - datetime.timedelta(hours=24)
+    start = datetime.datetime.utcnow() - datetime.timedelta(hours=hours)
     model_class = MoistureReadingModel if metric_type == "moisture" else MetricModel
 
     qs = model_class.query(plant.pub_id, MoistureReadingModel.created >= start)
