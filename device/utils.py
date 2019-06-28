@@ -83,3 +83,15 @@ def get_clamped_int(key, data, min_val, max_val, default):
     v = max(min_val, v)
     v = min(max_val, v)
     return v
+
+
+def pump_on():
+    from machine import Pin
+    pin = Pin(13, Pin.OUT)
+    pin.off() #turns pump on
+
+
+def pump_off():
+    from machine import Pin
+    pin = Pin(13, Pin.OUT)
+    pin.on() #turns pump off
