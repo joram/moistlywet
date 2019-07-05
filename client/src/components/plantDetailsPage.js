@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 import {Line} from 'react-chartjs-2';
 import "chartjs-plugin-annotation";
-import {auth, list_plants, get_plant, list_api_keys, list_plant_moisture, list_plant_temperature} from "./api"
+import {get_plant, list_api_keys, list_plant_moisture} from "../api"
 
 class PlantDetailsPage extends Component {
 
@@ -111,9 +111,6 @@ class PlantDetailsPage extends Component {
     this.state.apiKeys.forEach(api_key => {
       api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
     });
-
-    console.log("\n\n\nstate:");
-    console.log(this.state);
 
     let moisture_config = {};
     if(this.state.moistureData !== undefined){

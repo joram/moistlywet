@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import logo from './static/moisture.png';
-import './App.css';
+import logo from '../static/moisture.png';
+import '../App.css';
 import { GoogleLogin } from 'react-google-login';
-import {choose} from "./utils"
+import {choose} from "../utils"
+import { Grid, Image } from "semantic-ui-react"
+import { Redirect } from "react-router-dom"
 
 let tagline_options = [
   "sew moist seeds",
@@ -22,7 +24,7 @@ let tagline_options = [
   "for a happy, healthy bush",
   "fronds with benefits",
   "sensational plant action",
-  "more growth than you might expect"
+  "more growth than you might expect",
 ];
 
 let background_image_options = [
@@ -37,23 +39,39 @@ let background_image_options = [
 class LandingPage extends Component {
 
   render() {
-    return <div className="App" style={{backgroundSize: "cover", backgroundImage:`url("${choose(background_image_options)}")`}}>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo"/>
-        <h2>Moistly Wet</h2>
-        <div>{choose(tagline_options)}</div>
-        <GoogleLogin
-          clientId="84319228244-9k7qmqmsu2cvsv58lndtsmcl2nl8ovvj.apps.googleusercontent.com"
-          buttonText="Login"
-          onSuccess={this.props.loginSuccess}
-          onFailure={this.props.loginFailure}
-          responseType={"token"}
-          offline={true}
-          isSignedIn={true}
-          // autoLoad={true}
-        />
-      </header>
-    </div>;
+    if(this.props.user !== null){
+      return <Redirect to="/plants"/>
+    }
+    let style= {
+      position: "absolute",
+      paddingTop: "90px",
+      top:0,
+      height: "100vh",
+      width: "100%",
+      marginTop: 0,
+      backgroundSize: "cover",
+      // backgroundImage:`url("${choose(background_image_options)}")`,
+    };
+    return <>
+      <Grid columns={3} style={style} centered >
+        <Grid.Column textAlign='center'>
+          <Image src={logo} size="small" style={{display:"inline"}}/>
+          <h2>Moistly Wet</h2>
+          <div>{choose(tagline_options)}</div>
+          <br/>
+          <GoogleLogin
+            clientId="84319228244-9k7qmqmsu2cvsv58lndtsmcl2nl8ovvj.apps.googleusercontent.com"
+            buttonText="Login"
+            onSuccess={this.props.loginSuccess}
+            onFailure={this.props.loginFailure}
+            responseType={"token"}
+            offline={true}
+            isSignedIn={true}
+            // autoLoad={true}
+          />
+        </Grid.Column>
+      </Grid>
+    </>;
   }
 }
 

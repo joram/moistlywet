@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 import {Grid, Card, Image, Segment} from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import {list_plants} from "../api"
+
 
 class PlantItem extends Component {
 
@@ -29,12 +31,23 @@ class PlantItem extends Component {
 
 class PlantsListPage extends Component {
 
+  constructor(props){
+
+    super(props);
+    this.state = {
+      plants: [],
+    };
+    list_plants().then((response) => {
+      let state = this.state;
+      state.plants = response.plants;
+      this.setState(state);
+    })
+  }
+
   render() {
-    // if(this.props.plants === undefined){
-    //   return null
-    // }
+
     let plants = [];
-    this.props.plants.forEach(plant =>{
+    this.state.plants.forEach(plant =>{
       let p = <Grid.Column key={plant.pub_id}><PlantItem
         name={plant.name}
         minMoisture={plant.min_moisture}

@@ -1,7 +1,7 @@
 import React from "react";
 import {Menu, Image, Grid} from "semantic-ui-react";
 import logo from "../static/moisture.png"
-import {GoogleLogin} from "react-google-login";
+import {GoogleLogin, GoogleLogout} from "react-google-login";
 import { Link } from "react-router-dom";
 
 
@@ -22,6 +22,11 @@ class ProfileMenu extends React.Component {
             />
         }
         return <>
+            <GoogleLogout
+              clientId="84319228244-9k7qmqmsu2cvsv58lndtsmcl2nl8ovvj.apps.googleusercontent.com"
+              buttonText="Logout"
+              onLogoutSuccess={this.props.logoutSuccess}
+            />
             <span style={{paddingRight:"10px"}}>{this.props.user.name}</span>
             <Image src={this.props.user.imageUrl} circular size="mini" />
         </>
@@ -30,9 +35,27 @@ class ProfileMenu extends React.Component {
 
 
 class Header extends React.Component {
+
     render(){
+        let authed_items = <>
+            <Menu.Item>
+                <Link to="/plants">My Plants</Link>
+            </Menu.Item>
+            <Menu.Item position="right">
+                <ProfileMenu
+                    loginSuccess={this.props.loginSuccess}
+                    loginFailure={this.props.loginFailure}
+                    logoutSuccess={this.props.logoutSuccess}
+                    user={this.props.user}
+                />
+            </Menu.Item>
+        </>;
+        if(this.props.user === null){
+            authed_items = <></>
+        }
+
         return <>
-            <Menu>
+            <Menu id="header_menu">
                 <Menu.Item>
                     <Link to="/">
                         <Grid columns={2} >
@@ -41,18 +64,7 @@ class Header extends React.Component {
                         </Grid>
                     </Link>
                 </Menu.Item>
-                <Menu.Item>
-                    <Link to="/plants">
-                        My Plants
-                    </Link>
-                </Menu.Item>
-                <Menu.Item position="right">
-                    <ProfileMenu
-                        loginSuccess={this.props.loginSuccess}
-                        loginFailure={this.props.loginFailure}
-                        user={this.props.user}
-                    />
-                </Menu.Item>
+                {authed_items}
             </Menu>
         </>
     }
