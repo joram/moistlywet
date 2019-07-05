@@ -7,3 +7,22 @@
     pip install -r requirements.txt
     ```
 - create the file `scripts/.env` and inside it add:
+```
+
+```
+
+- create the file `~/.aws/credentials` and inside it add:
+```
+[moistlywet]
+aws_access_key_id=...
+aws_secret_access_key=...
+```
+
+- create the file `~/.aws/config` and inside it add:
+```
+[moistlywet]
+region=us-west-2
+output=json
+```
+
+then run `aws configure`

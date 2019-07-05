@@ -2,7 +2,7 @@
   "production": {
     "app_function": "api.app",
     "aws_region": "us-west-1",
-    "profile_name": "default",
+    "profile_name": "moistlywet",
     "project_name": "api",
     "runtime": "python3.6",
     "s3_bucket": "moistlywet-server",
