@@ -5,6 +5,8 @@ import PlantsListPage from "./plantsListPage";
 import PlantDetailsPage from "./plantDetailsPage";
 import PlantEditPage from "./plantEditPage";
 import {auth, list_plants, list_api_keys, list_plant_moisture, list_plant_temperature} from "./api"
+import Header from './components/header'
+import { BrowserRouter, Route } from "react-router-dom";
 
 class App extends Component {
 
@@ -14,23 +16,33 @@ class App extends Component {
       user: null,
       view: null,
       plantPubId: null,
+      plants: [],
+      apiKeys: [],
+      authed: false,
     };
   }
 
   loginSuccess(response){
     auth(response).then(resp => {
       if(resp){
-        list_plants().then(plants_data => {
-          list_api_keys().then(api_keys_data => {
-            let state = this.state;
-            state.user = response.profileObj;
-            state.plants = plants_data.plants;
-            state.apiKeys = api_keys_data.api_keys;
-            state.view = "listPlants";
-            this.setState(state);
-          })
-        });
+        let state = this.state;
+        state.user = response.profileObj;
+        state.authed = true;
+        this.setState(state);
+        this.getPlants();
       }
+    });
+  }
+
+  getPlants(){
+    return list_plants().then(plants_data => {
+      list_api_keys().then(api_keys_data => {
+        let state = this.state;
+        state.plants = plants_data.plants;
+        state.apiKeys = api_keys_data.api_keys;
+        state.view = "listPlants";
+        this.setState(state);
+      })
     });
   }
 
@@ -39,48 +51,50 @@ class App extends Component {
     console.log(response);
   }
 
-  handleClickEvent(data){
-    console.log(data.action, data.pubId);
-    let state = this.state;
-
-    if(data.action === "listPlants") {
-        state.view = "listPlants";
-        this.setState(state);
+  getPlant(pubId){
+    if(this.state.plants.length === 0){
+      this.getPlants();
+      return {}
     }
 
-    if(data.action === "details") {
-      list_plant_moisture(data.pubId, 24).then(plant_moisture_data => {
-        list_plant_temperature(data.pubId).then(plant_temperature_data => {
-          state.view = "details";
-          state.plantPubId = data.pubId;
-          state.moistureData = plant_moisture_data.data;
-          state.temperatureData = plant_temperature_data.data;
-          console.log(plant_moisture_data);
-          console.log(plant_temperature_data);
-          this.setState(state);
-        });
-      });
-    }
-
-    if(data.action === "edit") {
-      state.view = "edit";
-      state.plantPubId = data.pubId;
-      this.setState(state);
-    }
-
-  }
-
-  currentPlant(){
     let the_plant = null;
+    console.log(this.state.plants);
     this.state.plants.forEach(plant => {
-      if(plant.pub_id === this.state.plantPubId){
+      if(plant.pub_id === pubId){
         the_plant = plant;
       }
     });
+    if(the_plant === null){
+      // this.getPlants();
+      // return this.getPlant(pubId);
+    }
     return the_plant;
   }
 
-  render() {
+  render(){
+
+    // let plantsPage = <PlantsListPage plants={this.state.plants} onClick={this.handleClickEvent.bind(this)}/>
+    //
+    return (<BrowserRouter>
+      <Header
+        loginSuccess={this.loginSuccess.bind(this)}
+        loginFailure={this.loginFailure.bind(this)}
+        user={this.state.user}
+      />
+      {/*<Route exact path="/plants" component={PlantsListPage} plants={this.state.plants} />*/}
+      <Route exact path="/" render={(props) => <> Home Page </>} />
+      <Route exact path="/plants" render={(props) => <PlantsListPage plants={this.state.plants} />} />
+      {/*<Route path="/plants" component={PlantsListPage}  />*/}
+      <Route exact path="/plant/:id" render={({ match }) => {
+        if(this.state.authed){
+         return <PlantDetailsPage pubId={match.params.id} />
+        }
+        return <PlantsListPage plants={this.state.plants} />
+      }} />
+    </BrowserRouter>)
+  }
+
+  _render() {
     console.log(this.state.view);
 
     if(this.state.user === null){

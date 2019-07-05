@@ -2,8 +2,8 @@
 - install python
     ```
     pyenv install 3.6.6
-    pyenv virtualenv 3.6.6 mw
-    pyenv activate mw
+    pyenv virtualenv 3.6.6 moistlywet
+    pyenv activate moistlywet
     pip install -r requirements.txt
     ```
 - create the file `scripts/.env` and inside it add:

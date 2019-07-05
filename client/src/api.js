@@ -55,6 +55,10 @@ module.exports = {
     });
   },
 
+  get_plant: function(plant_id){
+    return get(`/api/v1/plant/${plant_id}`)
+  },
+
   list_plants: function(){
     return get("/api/v1/plants")
   },

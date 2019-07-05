@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import logo from './static/moisture.png';
 import './App.css';
 import { GoogleLogin } from 'react-google-login';
 import {choose} from "./utils"

@@ -138,6 +138,16 @@ def plant(token, plant_id):
         return jsonify({})
 
 
+@app.route('/api/v1/plant/<plant_id>', methods=["GET"])
+@requires_valid_token
+def plant_get(token, plant_id):
+    plants = PlantModel.query(token.user_pub_id)
+    for p in plants:
+        if p.pub_id == plant_id:
+            return jsonify(p.json())
+    return jsonify({})
+
+
 @app.route('/api/v1/plant/<plant_id>/<metric_type>', methods=["POST"])
 @requires_valid_api_key
 def moisture(api_key, plant_id, metric_type):
