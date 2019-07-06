@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 npm run build
 aws s3 sync build/ s3://app.moistlywet.com/
+aws cloudfront create-invalidation --distribution-id=EAG07MCR5OBUW --paths=/index.html

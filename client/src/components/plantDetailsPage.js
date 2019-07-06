@@ -3,6 +3,8 @@ import '../App.css';
 import {Line} from 'react-chartjs-2';
 import "chartjs-plugin-annotation";
 import {get_plant, list_api_keys, list_plant_moisture} from "../api"
+import {Grid, Image, Header} from "semantic-ui-react"
+
 
 class PlantDetailsPage extends Component {
 
@@ -122,24 +124,16 @@ class PlantDetailsPage extends Component {
     };
 
 
-    return <div className="plant">
-      <table style={{"width":"100%"}}>
-        <tbody>
-          <tr>
-            <td style={style}>
-              <div className="plant">
-                <div style={{textAlign: "center"}}>{this.state.plant.name}</div>
-                <img src={this.state.plant.image_url} style={{
-                  maxWidth: "25vw",
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                }}/>
-                <div style={{textAlign: "center"}}>{this.state.plant.pub_id}</div>
-                <div style={{textAlign: "center"}}>{api_keys}</div>
-              </div>
-            </td>
-            <td style={style}>
+    return <Grid textAlign="center">
+          <Grid.Column width={4}>
+              <br/>
+              <Header>{this.state.plant.name}</Header>
+              <Image src={this.state.plant.image_url} size="medium"/>
+              <div>{this.state.plant.pub_id}</div>
+              <div>{api_keys}</div>
+          </Grid.Column>
+          <Grid.Column width={12}>
+              <Line data={moisture_config.data} options={moisture_config.options} />
               <select onChange={this.onHistoryChange.bind(this)}>
                 <option value="1">1hr</option>
                 <option value="12">12hrs</option>
@@ -147,13 +141,8 @@ class PlantDetailsPage extends Component {
                 <option value="72">3 days</option>
                 <option value="168">week</option>
               </select>
-              <Line data={moisture_config.data} options={moisture_config.options} />
-              {/*<Line data={temperature_config.data} options={temperature_config.options} />*/}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>;
+          </Grid.Column>
+      </Grid>;
   }
 }
 

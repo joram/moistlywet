@@ -22,11 +22,11 @@ class ProfileMenu extends React.Component {
             />
         }
         return <>
-            <GoogleLogout
-              clientId="84319228244-9k7qmqmsu2cvsv58lndtsmcl2nl8ovvj.apps.googleusercontent.com"
-              buttonText="Logout"
-              onLogoutSuccess={this.props.logoutSuccess}
-            />
+            {/*<GoogleLogout*/}
+            {/*  clientId="84319228244-9k7qmqmsu2cvsv58lndtsmcl2nl8ovvj.apps.googleusercontent.com"*/}
+            {/*  buttonText="Logout"*/}
+            {/*  onLogoutSuccess={this.props.logoutSuccess}*/}
+            {/*/>*/}
             <span style={{paddingRight:"10px"}}>{this.props.user.name}</span>
             <Image src={this.props.user.imageUrl} circular size="mini" />
         </>
