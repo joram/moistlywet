@@ -2,41 +2,33 @@ import React, { Component } from 'react';
 import '../App.css';
 import {Line} from 'react-chartjs-2';
 import "chartjs-plugin-annotation";
-import {get_plant, list_api_keys, list_plant_moisture} from "../api"
+import {get_plant, list_plant_moisture} from "../api"
 import {Grid, Image, Header} from "semantic-ui-react"
 
 
-class PlantDetailsPage extends Component {
+class PlantMoistureGraph extends Component {
 
-  constructor(props) {
+  constructor(props){
     super(props);
+
     this.state = {
-      apiKeys: [],
-      plant: {name:"", image_url:""}
+      loaded: false,
+      data: [],
+      options: {},
     };
 
-    let pubId = this.props.pubId;
-    let state = this.state;
-    list_plant_moisture(pubId, 24).then(moisture_data => {
-      get_plant(pubId).then(plant_details => {
-        state.pub_id = pubId;
-        state.plant = plant_details;
-        state.view = "details";
-        state.plantPubId = pubId;
-        state.moistureData = moisture_data.data;
+    if(this.props.pubId !== undefined){
+      list_plant_moisture(this.props.pubId, 24).then(response => {
+        console.log("state", this.state);
+        let state = this.state;
+        let graph_data = this._create_graphjs_data.bind(this)(response.data, "moisture");
+        state.loaded = true;
+        state.data = graph_data.data;
+        state.options = graph_data.options;
         this.setState(state);
       });
-    });
-  }
+    }
 
-  onHistoryChange(e){
-      let state = this.state;
-      state.history = parseInt(e.target.value);
-      list_plant_moisture(this.props.plant.pub_id, 24).then(plant_moisture_data => {
-        console.log(plant_moisture_data);
-        state.moistureData = plant_moisture_data.data;
-        this.setState(state);
-      });
   }
 
   _create_graphjs_data(raw_data, metric_name){
@@ -64,6 +56,9 @@ class PlantDetailsPage extends Component {
       ],
 
     };
+
+    console.log("plant", this.props.plant);
+
     let graphjs_options = {
       scales: {
         xAxes: [{
@@ -80,7 +75,7 @@ class PlantDetailsPage extends Component {
           type: 'line',
           mode: 'horizontal',
           scaleID: 'y-axis-0',
-          value: this.state.plant.min_moisture,
+          value: this.props.plant.min_moisture,
           borderColor: 'rgb(192, 75, 75)',
           borderWidth: 2,
           label: {
@@ -91,7 +86,7 @@ class PlantDetailsPage extends Component {
           type: 'line',
           mode: 'horizontal',
           scaleID: 'y-axis-0',
-          value: this.state.plant.max_moisture,
+          value: this.props.plant.max_moisture,
           borderColor: 'rgb(75, 75, 192)',
           borderWidth: 2,
           label: {
@@ -107,23 +102,52 @@ class PlantDetailsPage extends Component {
     }
   }
 
+  render(){
+    if(this.state.loaded === false){
+      return null;
+    }
+    console.log(this.state.options);
+    return <Line
+        data={this.state.data}
+        options={this.state.options}
+    />
+  }
+}
+
+
+class PlantDetailsPage extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      apiKeys: [],
+      plant: {name:"", image_url:""}
+    };
+
+    get_plant(this.props.pubId).then(plant_details => {
+      let state = this.state;
+      state.pub_id = this.props.pubId;
+      state.plant = plant_details;
+      this.setState(state);
+    });
+  }
+
+  onHistoryChange(e){
+      let state = this.state;
+      state.history = parseInt(e.target.value);
+      list_plant_moisture(this.props.plant.pub_id, 24).then(plant_moisture_data => {
+        state.moistureData = plant_moisture_data.data;
+        this.setState(state);
+      });
+  }
+
   render() {
 
     let api_keys = [];
     this.state.apiKeys.forEach(api_key => {
       api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
     });
-
-    let moisture_config = {};
-    if(this.state.moistureData !== undefined){
-      moisture_config = this._create_graphjs_data(this.state.moistureData, "moisture");
-    }
-
-    let style= {
-      border: "solid thin black",
-    };
-
-
+    console.log("details page: ", this.state);
     return <Grid textAlign="center">
           <Grid.Column width={4}>
               <br/>
@@ -133,7 +157,7 @@ class PlantDetailsPage extends Component {
               <div>{api_keys}</div>
           </Grid.Column>
           <Grid.Column width={12}>
-              <Line data={moisture_config.data} options={moisture_config.options} />
+              <PlantMoistureGraph pubId={this.props.pubId} plant={this.state.plant} />
               <select onChange={this.onHistoryChange.bind(this)}>
                 <option value="1">1hr</option>
                 <option value="12">12hrs</option>
@@ -145,5 +169,6 @@ class PlantDetailsPage extends Component {
       </Grid>;
   }
 }
+
 
 export default PlantDetailsPage;
