@@ -19,13 +19,14 @@ class PlantMoistureGraph extends Component {
 
     if(this.props.pubId !== undefined){
       list_plant_moisture(this.props.pubId, 24).then(response => {
-        console.log("state", this.state);
-        let state = this.state;
-        let graph_data = this._create_graphjs_data.bind(this)(response.data, "moisture");
-        state.loaded = true;
-        state.data = graph_data.data;
-        state.options = graph_data.options;
-        this.setState(state);
+        if(response.data !== undefined){
+          let state = this.state;
+          let graph_data = this._create_graphjs_data.bind(this)(response.data, "moisture");
+          state.loaded = true;
+          state.data = graph_data.data;
+          state.options = graph_data.options;
+          this.setState(state);
+        }
       });
     }
 
@@ -56,8 +57,6 @@ class PlantMoistureGraph extends Component {
       ],
 
     };
-
-    console.log("plant", this.props.plant);
 
     let graphjs_options = {
       scales: {
@@ -106,7 +105,6 @@ class PlantMoistureGraph extends Component {
     if(this.state.loaded === false){
       return null;
     }
-    console.log(this.state.options);
     return <Line
         data={this.state.data}
         options={this.state.options}
@@ -147,7 +145,6 @@ class PlantDetailsPage extends Component {
     this.state.apiKeys.forEach(api_key => {
       api_keys.push(<div key={api_key.api_key} className="api_key">{api_key.api_key}</div>)
     });
-    console.log("details page: ", this.state);
     return <Grid textAlign="center">
           <Grid.Column width={4}>
               <br/>
@@ -171,4 +168,5 @@ class PlantDetailsPage extends Component {
 }
 
 
+export { PlantMoistureGraph };
 export default PlantDetailsPage;

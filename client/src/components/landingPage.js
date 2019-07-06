@@ -4,7 +4,8 @@ import '../App.css';
 import { GoogleLogin } from 'react-google-login';
 import {choose} from "../utils"
 import { Grid, Image } from "semantic-ui-react"
-import { Redirect } from "react-router-dom"
+import {PlantMoistureGraph} from "./plantDetailsPage"
+import {get_plant} from "../api";
 
 let tagline_options = [
   "sew moist seeds",
@@ -39,10 +40,27 @@ let tagline_options = [
 
 class LandingPage extends Component {
 
+    examplePubId = "plant_09ee89d38ff74034a0c828d05ec74217";
+
+    constructor(props) {
+    super(props);
+    this.state = {
+      plant: {name:"", image_url:"", pubId: this.examplePubId}
+    };
+
+    get_plant(this.examplePubId).then(plant_details => {
+      let state = this.state;
+      state.pubId = this.examplePubId;
+      state.plant = plant_details;
+      this.setState(state);
+    });
+  }
+
+
   render() {
-    if(this.props.user !== null){
-      return <Redirect to="/plants"/>
-    }
+    // if(this.props.user !== null){
+    //   return <Redirect to="/plants"/>
+    // }
     let style= {
       position: "absolute",
       paddingTop: "90px",
@@ -53,13 +71,14 @@ class LandingPage extends Component {
       backgroundSize: "cover",
       // backgroundImage:`url("${choose(background_image_options)}")`,
     };
+
     return <>
       <Grid columns={3} style={style} centered >
         <Grid.Column textAlign='center'>
           <Image src={logo} size="small" style={{display:"inline"}}/>
           <h2>Moistly Wet</h2>
+          <PlantMoistureGraph pubId={this.examplePubId} plant={this.state.plant} />
           <div>{choose(tagline_options)}</div>
-          <br/>
           <GoogleLogin
             clientId="84319228244-9k7qmqmsu2cvsv58lndtsmcl2nl8ovvj.apps.googleusercontent.com"
             buttonText="Login"
