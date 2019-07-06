@@ -3,7 +3,7 @@ import logo from '../static/moisture.png';
 import '../App.css';
 import { GoogleLogin } from 'react-google-login';
 import {choose} from "../utils"
-import { Grid, Image } from "semantic-ui-react"
+import {Grid, Image, Divider, Header, Segment} from "semantic-ui-react"
 import {PlantMoistureGraph} from "./plantDetailsPage"
 import {get_plant} from "../api";
 
@@ -58,12 +58,9 @@ class LandingPage extends Component {
 
 
   render() {
-    // if(this.props.user !== null){
-    //   return <Redirect to="/plants"/>
-    // }
     let style= {
       position: "absolute",
-      paddingTop: "90px",
+      paddingTop: "70px",
       top:0,
       height: "100vh",
       width: "100%",
@@ -75,20 +72,14 @@ class LandingPage extends Component {
     return <>
       <Grid columns={3} style={style} centered >
         <Grid.Column textAlign='center'>
-          <Image src={logo} size="small" style={{display:"inline"}}/>
-          <h2>Moistly Wet</h2>
+          <Header size="large">Moistly Wet</Header>
+          <Image src={logo} size="mini" style={{display:"inline"}}/>
+          <Divider horizontal>{choose(tagline_options)}</Divider>
+          <Segment basic>
+            An app to accompany some hardware. It monitors the moisture of plants, and waters the plant as needed.
+            Below is a graph showing the moisture of a plant on my desk.
+          </Segment>
           <PlantMoistureGraph pubId={this.examplePubId} plant={this.state.plant} />
-          <div>{choose(tagline_options)}</div>
-          <GoogleLogin
-            clientId="84319228244-9k7qmqmsu2cvsv58lndtsmcl2nl8ovvj.apps.googleusercontent.com"
-            buttonText="Login"
-            onSuccess={this.props.loginSuccess}
-            onFailure={this.props.loginFailure}
-            responseType={"token"}
-            offline={true}
-            isSignedIn={true}
-            // autoLoad={true}
-          />
         </Grid.Column>
       </Grid>
     </>;

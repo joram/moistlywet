@@ -1,7 +1,7 @@
 import React from "react";
 import {Menu, Image, Grid} from "semantic-ui-react";
 import logo from "../static/moisture.png"
-import {GoogleLogin, GoogleLogout} from "react-google-login";
+import {GoogleLogin} from "react-google-login";
 import { Link } from "react-router-dom";
 
 
@@ -50,9 +50,9 @@ class Header extends React.Component {
                 />
             </Menu.Item>
         </>;
-        if(this.props.user === null){
-            authed_items = <></>
-        }
+        // if(this.props.user === null){
+        //     authed_items = <></>
+        // }
 
         return <>
             <Menu id="header_menu">

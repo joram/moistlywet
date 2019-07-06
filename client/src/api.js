@@ -29,7 +29,11 @@ function get(path, data){
     'MOISTLY-WET-TOKEN': token,
   }
 
-  return _fetch(path, data, "GET", json_headers)
+  let response = _fetch(path, data, "GET", json_headers);
+  response.then((result) => {
+    console.log(path, data, result);
+  });
+  return response;
 }
 
 function _fetch(path, data, method, headers){

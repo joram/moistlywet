@@ -59,6 +59,9 @@ class PlantMoistureGraph extends Component {
     };
 
     let graphjs_options = {
+      legend: {
+        display: false,
+      },
       scales: {
         xAxes: [{
           type: 'time',

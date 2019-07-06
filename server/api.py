@@ -1,7 +1,7 @@
 import random
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from auth_decorators import requires_valid_token, requires_valid_api_key
+from auth_decorators import requires_valid_token, requires_valid_api_key, requires_valid_plant_token
 from models import UserModel, AuthTokenModel, PlantModel, APIKeyModel, MoistureReadingModel, MetricModel
 import datetime
 
@@ -139,7 +139,7 @@ def plant(token, plant_id):
 
 
 @app.route('/api/v1/plant/<plant_id>', methods=["GET"])
-@requires_valid_token
+@requires_valid_plant_token
 def plant_get(token, plant_id):
     plants = PlantModel.query(token.user_pub_id)
     for p in plants:
@@ -149,7 +149,7 @@ def plant_get(token, plant_id):
 
 
 @app.route('/api/v1/plant/<plant_id>/<metric_type>', methods=["POST"])
-@requires_valid_api_key
+@requires_valid_token
 def moisture(api_key, plant_id, metric_type):
     if metric_type not in ["moisture", "temperature"]:
         return jsonify({"error": f"unknown metric type {metric_type}"})
@@ -168,7 +168,7 @@ def moisture(api_key, plant_id, metric_type):
 
 
 @app.route('/api/v1/plant/<plant_id>/<metric_type>', methods=["GET"])
-@requires_valid_token
+@requires_valid_plant_token
 def moisture_get(token, plant_id, metric_type):
     hours = int(request.args.get("hours", 24))
     hours = min(hours, 24*7)
