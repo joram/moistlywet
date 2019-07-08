@@ -1,5 +1,5 @@
 import React from "react";
-import {Menu, Image, Grid} from "semantic-ui-react";
+import {Menu, Image, Grid, Segment} from "semantic-ui-react";
 import logo from "../static/moisture.png"
 import {GoogleLogin} from "react-google-login";
 import { Link } from "react-router-dom";
@@ -55,7 +55,7 @@ class Header extends React.Component {
         // }
 
         return <>
-            <Menu id="header_menu">
+            <Menu id="header_menu" style={{zIndex:10, position:"relative"}}>
                 <Menu.Item>
                     <Link to="/">
                         <Grid columns={2} >

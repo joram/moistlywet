@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
+import {auth} from "./api"
+import { BrowserRouter, Route } from "react-router-dom";
+
 import LandingPage from "./components/landingPage.js";
 import PlantsListPage from "./components/plantsListPage";
 import PlantDetailsPage from "./components/plantDetailsPage";
-import {auth} from "./api"
+import PlantEditPage from "./components/plantEditPage";
 import Header from './components/header'
-import { BrowserRouter, Route } from "react-router-dom";
+
 
 class App extends Component {
 
@@ -64,6 +67,7 @@ class App extends Component {
       {header}
       <Route exact path="/" render={(props) => <LandingPage user={this.state.user}/>} />
       <Route exact path="/plants" render={(props) => <PlantsListPage plants={this.state.plants} />} />
+      <Route exact path="/create/plant" component={PlantEditPage} />
       <Route exact path="/plant/:id" render={({ match }) => {
         if(this.state.authed){
          return <PlantDetailsPage pubId={match.params.id} />

@@ -3,7 +3,7 @@ import '../App.css';
 import {Grid, Card, Image, Segment} from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import {list_plants} from "../api"
-
+import add_icon from "../static/add.png"
 
 class PlantItem extends Component {
 
@@ -63,6 +63,17 @@ class PlantsListPage extends Component {
     return <Segment basic>
       <Grid columns={6}>
         {plants}
+        <Link to="/create/plant">
+          <Card>
+            <Image src={add_icon} wrapped ui={false} size="mini"/>
+            {/*<Card.Content>*/}
+            {/*  <Card.Header>{this.props.name}</Card.Header>*/}
+            {/*  <Card.Meta>*/}
+            {/*    {this.props.minMoisture} - {this.props.maxMoisture}*/}
+            {/*  </Card.Meta>*/}
+            {/*</Card.Content>*/}
+          </Card>
+        </Link>
       </Grid>
     </Segment>
   }
