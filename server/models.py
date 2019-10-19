@@ -75,6 +75,7 @@ class PlantModel(Model):
     image_url = UnicodeAttribute(null=True)
     min_moisture = NumberAttribute()
     max_moisture = NumberAttribute()
+    state = UnicodeAttribute(null=True)
 
     class Meta:
         table_name = "moistlywet_plants"

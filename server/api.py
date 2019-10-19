@@ -128,7 +128,6 @@ def api_key():
 @requires_valid_token
 def plant(token, plant_id):
     img = request.form.get("image_file")
-    print(type(img))
     for plant in PlantModel.query(token.user_pub_id, PlantModel.pub_id.startswith(plant_id)):
         plant.name = request.form.get("name")
         # plant.image_url = request.form.get("image_url")
@@ -149,7 +148,7 @@ def plant_get(token, plant_id):
 
 
 @app.route('/api/v1/plant/<plant_id>/<metric_type>', methods=["POST"])
-@requires_valid_token
+@requires_valid_api_key
 def moisture(api_key, plant_id, metric_type):
     if metric_type not in ["moisture", "temperature"]:
         return jsonify({"error": f"unknown metric type {metric_type}"})
@@ -161,6 +160,31 @@ def moisture(api_key, plant_id, metric_type):
     key = "moisture" if metric_type == "moisture" else "value"
     metric_value = data.get(key, -1)
     reading = plant.add_metric(metric_type, metric_value)
+
+    if key == "moisture":
+        water_response = jsonify({
+            "water_for": 5,
+            "wait_for": 25,
+        })
+        idle_response = jsonify({
+            "water_for": 0,
+            "wait_for": 60,
+        })
+
+        #  switched to watering
+        if metric_value < plant.min_moisture and plant.state == "idling":
+            plant.state = "watering"
+            plant.save()
+
+        # switched to idling
+        if metric_value > plant.max_moisture and plant.state == "watering":
+            plant.state = "idling"
+            plant.save()
+
+        # if plant.state == "watering":
+        #     return water_response
+        return idle_response
+
     return jsonify({
         "water_for": 0,
         "wait_for": 60,

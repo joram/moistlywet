@@ -1,1 +1,2 @@
 esptool==2.6
+adafruit-ampy

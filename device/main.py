@@ -2,8 +2,17 @@ import time
 from config import get_config
 from utils import read_moisture, call_home, do_connect, get_clamped_int, pump_on, pump_off
 
+running = False
+
 
 def main():
+
+    # singleton function
+    global running
+    if running:
+        return
+    running = True
+
     c = get_config()
     while True:
         do_connect(c.WIFI_SSID, c.WIFI_PASSWORD)

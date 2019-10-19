@@ -25,8 +25,8 @@ class Config(object):
             stored_config = json.loads(f.read())
             self.API_KEY = stored_config.get("api_key")
             self.PLANT_ID = stored_config.get("plant_id")
-            self.MAX_WAIT_FOR = stored_config.get("max_wait_for")
-            self.MAX_WATER_FOR = stored_config.get("max_water_for")
+            self.MAX_WAIT_FOR = stored_config.get("max_wait_for", self.MAX_WAIT_FOR)
+            self.MAX_WATER_FOR = stored_config.get("max_water_for", self.MAX_WATER_FOR)
             self.WIFI_SSID = stored_config.get("wifi_ssid")
             self.WIFI_PASSWORD = stored_config.get("wifi_password")
 

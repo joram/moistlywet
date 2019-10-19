@@ -1,0 +1,8 @@
+{
+  "api_key": "",
+  "plant_id": "",
+  "max_wait_for": 60,
+  "max_water_for": 10,
+  "wifi_ssid": "my wifi ssid",
+  "wifi_password": "my wifi password"
+}

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## Install micropython
+wget -O esp32-latest.bin https://micropython.org/resources/firmware/esp32-20190529-v1.11.bin
+sudo pip3 install -r requirements.txt
+sudo esptool.py --port /dev/ttyUSB0 erase_flash
+sudo esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash -z 0x1000 esp32-latest.bin
