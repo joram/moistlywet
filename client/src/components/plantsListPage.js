@@ -20,7 +20,10 @@ class PlantItem extends Component {
         <Image src={this.props.imageUrl} wrapped ui={false} />
         <Card.Content>
           <Card.Header>{this.props.name}</Card.Header>
-          <Card.Meta>
+          <Card.Meta style={{
+            overflow: "hidden" ,
+            textOverflow: "ellipsis"
+          }}>
             {this.props.minMoisture} - {this.props.maxMoisture}
           </Card.Meta>
         </Card.Content>
@@ -63,17 +66,19 @@ class PlantsListPage extends Component {
     return <Segment basic>
       <Grid columns={6}>
         {plants}
+        <Grid.Column key="add">
         <Link to="/create/plant">
           <Card>
-            <Image src={add_icon} wrapped ui={false} size="mini"/>
-            {/*<Card.Content>*/}
-            {/*  <Card.Header>{this.props.name}</Card.Header>*/}
+            <Image src={add_icon} wrapped ui={false} size="small"/>
+            <Card.Content>
+              <Card.Header>New Plant</Card.Header>
             {/*  <Card.Meta>*/}
             {/*    {this.props.minMoisture} - {this.props.maxMoisture}*/}
             {/*  </Card.Meta>*/}
-            {/*</Card.Content>*/}
+            </Card.Content>
           </Card>
         </Link>
+        </Grid.Column>
       </Grid>
     </Segment>
   }
