@@ -1,3 +1,4 @@
 #!/bin/bash
 
-picocom /dev/ttyUSB0 -b115200
+echos "To exit, ctrl+a+x"
+sudo picocom /dev/ttyUSB0 -b115200

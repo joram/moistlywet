@@ -1,18 +1,23 @@
 import time
 import urequests
 import network
+from machine import Pin, ADC
+
+ResetPin = Pin(0)
+DHTpin = Pin(22)
+LedPin = Pin(16)
+SOILpin = Pin(32)
+LIGHTpin = Pin(34)
 
 
-def _get_readings(num_readings, pwr_pin, adc):
+def _get_readings(num_readings, adc):
     readings = []
     import time
 
     while len(readings) < num_readings:
-        pwr_pin.on()
         time.sleep(0.01)
         v = adc.read()
         time.sleep(0.05)
-        pwr_pin.off()
 
         print(v)
         if v not in [1024, 0]:
@@ -25,10 +30,13 @@ def avg(values):
 
 
 def read_moisture(num_readings=21):
-    from machine import Pin, ADC
     if num_readings % 2 == 0:
         num_readings += 1
-    readings = _get_readings(num_readings, Pin(14), ADC(0))
+
+    adc = ADC(SOILpin)
+    adc.atten(ADC.ATTN_11DB)  # set 11dB input attenuation (voltage range roughly 0.0v - 3.6v)
+    adc.width(ADC.WIDTH_9BIT)  # set 9 bit return values (returned range 0-511)
+    readings = _get_readings(num_readings, adc)
     if num_readings <= 3:
         return int(sum(readings)/len(readings))
     median_index = int((num_readings-1)/2)
@@ -49,11 +57,13 @@ def read_moisture(num_readings=21):
 
 def call_home(reading, api_key, plant_id):
     url = "https://api.moistlywet.com/api/v1/plant/%s/moisture" % plant_id
-    headers = {"moistly-wet-api-key": api_key}
+    headers = {"moistly-wet-api-key": api_key, "content-type": "application/json"}
     data = {"moisture": reading}
 
     try:
+        print(data)
         res = urequests.post(url, json=data, headers=headers)
+        print(res.text)
         return res.json()
     except Exception as e:
         print(e)

@@ -3,4 +3,5 @@
 ## Put files
 sudo ampy --port /dev/ttyUSB0 put main.py
 sudo ampy --port /dev/ttyUSB0 put utils.py
+sudo ampy --port /dev/ttyUSB0 put config.py
 sudo ampy --port /dev/ttyUSB0 put config.json
